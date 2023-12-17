@@ -120,7 +120,7 @@ def train(model, optimizer, criterion, train_loader, valid_loader, num_epochs, s
     best_val_loss = float('inf')
     best_val_acc = 0.0
     early_stopping = 2
-    scheduler = lr_scheduler.StepLR(optimizer, step_size=1000, gamma=0.1)
+    scheduler = lr_scheduler.StepLR(optimizer, step_size=500, gamma=0.1)
 
     for epoch in range(num_epochs + 1):
         epoch_start_time = time.time()
