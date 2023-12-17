@@ -8,8 +8,11 @@ from tokenizer import *
 from copy import deepcopy
 import json
 import torch.optim.lr_scheduler as lr_scheduler
+import os
+import gc
 
 def train_epoch(model, optimizer, criterion, data_loader, device, epoch, scheduler=None):
+    torch.cuda.empty_cache()
     model.train()
     total_correct, total_count = 0, 0
     total_loss = 0
@@ -100,11 +103,13 @@ def train(model, optimizer, criterion, train_loader, valid_loader, num_epochs, s
                 f'Train Loss: {train_loss:.4f} | '
                 f'Train Accuracy: {train_acc:.4f} | ')
 
+    torch.cuda.empty_cache()  # Clear GPU cache after evaluation
+    gc.collect()  # Collect garbage to free memory
 
 def tune_hyperparameters(config, train_dataset, valid_dataset):
     # Hyperparameters space
     learning_rates = [0.001]
-    batch_sizes = [64, 128]
+    batch_sizes = [128]
     num_encoder_layers_options = [2,3]
     dim_feedforward_options = [128, 216, 512]
     nhead_options = [4, 8]
