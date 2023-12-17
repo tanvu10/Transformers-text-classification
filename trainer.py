@@ -103,10 +103,10 @@ def train(model, optimizer, criterion, train_loader, valid_loader, num_epochs, s
 
 def tune_hyperparameters(config, train_dataset, valid_dataset):
     # Hyperparameters space
-    learning_rates = [0.01, 0.001]
+    learning_rates = [0.001]
     batch_sizes = [64, 128]
     num_encoder_layers_options = [2,3]
-    dim_feedforward_options = [128, 512]
+    dim_feedforward_options = [128, 216, 512]
     nhead_options = [4, 8]
     best_val_accuracy = 0.0
     best_config = None
@@ -131,7 +131,13 @@ def tune_hyperparameters(config, train_dataset, valid_dataset):
                         valid_loader = DataLoader(valid_dataset, batch_size=current_config.batch_size, collate_fn=collate_batch)
 
                         # Initialize the model
-                        model = TransformerEncoderModel(current_config).to(device)
+                        model = TransformerEncoderModel(current_config)
+
+                        if torch.cuda.device_count() > 1:
+                            print("Let's use", torch.cuda.device_count(), "GPUs")
+                            model = nn.DataParallel(model)
+
+                        model.to(device)
                         optimizer = torch.optim.Adam(model.parameters(), lr=current_config.lr)
                         criterion = torch.nn.CrossEntropyLoss()
 
