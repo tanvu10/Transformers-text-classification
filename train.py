@@ -68,8 +68,11 @@ optimizer = optim.Adam(final_model.parameters(), lr=best_config.lr)
 criterion = CrossEntropyLoss()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+if torch.cuda.device_count() > 1:
+    print("Let's use", torch.cuda.device_count(), "GPUs")
+    final_model = nn.DataParallel(final_model)
+
 
 train(final_model, optimizer, criterion, final_train_loader, test_loader, best_config.max_epochs, save_model_path, option='test')
 test_loss, test_accuracy = evaluate(final_model, test_loader, device, criterion)
 print(f'Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}')
-
