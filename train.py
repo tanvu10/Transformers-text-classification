@@ -9,7 +9,7 @@ from trainer import *
 class Config(object):
     batch_size = 64
     d_model = 200 # embedded_size
-    nhead = 8
+    nhead = 4
     num_encoder_layers = 2
     dim_feedforward = 128
     dropout = 0.1
