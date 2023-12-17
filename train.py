@@ -16,7 +16,7 @@ class Config(object):
     max_seq_length = None
     lr = 0.001
     vocab_size = None
-    max_epochs = 3
+    max_epochs = 5
     early_stopping = 2
 
 config = Config()

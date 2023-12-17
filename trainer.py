@@ -159,7 +159,7 @@ def train(model, optimizer, criterion, train_loader, valid_loader, num_epochs, s
 def tune_hyperparameters(config, train_dataset, valid_dataset):
     # Hyperparameters space
     learning_rates = [0.001]
-    batch_sizes = [128]
+    batch_sizes = [64, 128]
     num_encoder_layers_options = [2,3]
     dim_feedforward_options = [128, 216, 512]
     nhead_options = [4, 8]
