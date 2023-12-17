@@ -8,7 +8,9 @@ from tokenizer import *
 from copy import deepcopy
 import json
 import torch.optim.lr_scheduler as lr_scheduler
+from torch.cuda.amp import GradScaler, autocast
 import gc
+
 
 
 # def train_epoch(model, optimizer, criterion, data_loader, device, epoch, scheduler=None):
