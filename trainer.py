@@ -3,7 +3,6 @@ import torch.optim as optim
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader
 import time
-import matplotlib.pyplot as plt
 from model import *
 from tokenizer import *
 from copy import deepcopy
