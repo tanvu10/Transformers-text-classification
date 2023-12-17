@@ -52,8 +52,8 @@ config.max_seq_length = max_seq_length
 
 
 # hyper-parameters tuning
-best_config = tune_hyperparameters(config, train_dataset, valid_dataset)
-
+# best_config = tune_hyperparameters(config, train_dataset, valid_dataset)
+best_config = config
 # combine train + valid
 final_train_df = pd.concat([train_df, valid_df])
 final_train_dataset = TextClassificationDataset(final_train_df, vocab, tokenizer)
