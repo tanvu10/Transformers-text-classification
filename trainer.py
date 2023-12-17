@@ -8,94 +8,92 @@ from tokenizer import *
 from copy import deepcopy
 import json
 import torch.optim.lr_scheduler as lr_scheduler
-from torch.cuda.amp import GradScaler, autocast
 import gc
 
 
-
-def train_epoch(model, optimizer, criterion, data_loader, device, epoch, scheduler=None):
-    torch.cuda.empty_cache()
-    model.train()
-    total_correct, total_count = 0, 0
-    total_loss = 0
-    log_interval = 10
-    start_time = time.time()
-
-    for idx, (inputs, labels) in enumerate(data_loader):
-        inputs, labels = inputs.to(device), labels.to(device)
-        optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-
-        if scheduler:
-            scheduler.step()
-
-        total_correct += (outputs.argmax(1) == labels).sum().item()
-        total_count += labels.size(0)
-        total_loss += loss.item()
-
-        # log results every 10 batches
-        if idx % log_interval == 0 and idx > 0:
-            elapsed = time.time() - start_time
-            print(f'Epoch {epoch+1} | {idx}/{len(data_loader)} batches | '
-                  f'Accuracy: {total_correct / total_count:.3f} | '
-                  f'Loss: {loss.item():.3f} | '
-                  f'Elapsed time: {elapsed:.2f}s')
-            start_time = time.time()
-    
-    return total_loss / len(data_loader), total_correct / total_count
-    
-
-# def train_epoch(model, optimizer, criterion, data_loader, device, epoch, scheduler=None, grad_accumulation_steps=1):
+# def train_epoch(model, optimizer, criterion, data_loader, device, epoch, scheduler=None):
 #     torch.cuda.empty_cache()
 #     model.train()
-#     scaler = GradScaler()  # Initialize the gradient scaler for mixed precision
 #     total_correct, total_count = 0, 0
 #     total_loss = 0
 #     log_interval = 10
 #     start_time = time.time()
-#     optimizer.zero_grad()  # Move optimizer.zero_grad() outside the batch loop
 
 #     for idx, (inputs, labels) in enumerate(data_loader):
 #         inputs, labels = inputs.to(device), labels.to(device)
+#         optimizer.zero_grad()
+#         outputs = model(inputs)
+#         loss = criterion(outputs, labels)
+#         loss.backward()
+#         optimizer.step()
 
-#         # Start of mixed precision block
-#         with autocast():
-#             outputs = model(inputs)
-#             loss = criterion(outputs, labels) / grad_accumulation_steps  # Scale loss
-
-#         # Scale loss to prevent underflow
-#         scaler.scale(loss).backward()
-
-#         if (idx + 1) % grad_accumulation_steps == 0:  # Only step every grad_accumulation_steps
-#             scaler.step(optimizer)  # Adjust model parameters
-#             scaler.update()  # Update the scale for next iteration
-#             optimizer.zero_grad()  # Zero the parameter gradients
-
-#         if scheduler and (idx + 1) % grad_accumulation_steps == 0:
-#             scheduler.step()  # Update the learning rate
+#         if scheduler:
+#             scheduler.step()
 
 #         total_correct += (outputs.argmax(1) == labels).sum().item()
 #         total_count += labels.size(0)
-#         total_loss += loss.item() * grad_accumulation_steps  # Unscale the loss
+#         total_loss += loss.item()
 
+#         # log results every 10 batches
 #         if idx % log_interval == 0 and idx > 0:
 #             elapsed = time.time() - start_time
 #             print(f'Epoch {epoch+1} | {idx}/{len(data_loader)} batches | '
 #                   f'Accuracy: {total_correct / total_count:.3f} | '
-#                   f'Loss: {loss.item() * grad_accumulation_steps:.3f} | '  # Unscale the loss for logging
+#                   f'Loss: {loss.item():.3f} | '
 #                   f'Elapsed time: {elapsed:.2f}s')
 #             start_time = time.time()
-
-#     # After the epoch, ensure any remaining gradients are processed
-#     if len(data_loader) % grad_accumulation_steps != 0:
-#         scaler.step(optimizer)
-#         scaler.update()
-#         optimizer.zero_grad()
-
+    
 #     return total_loss / len(data_loader), total_correct / total_count
+    
+
+def train_epoch(model, optimizer, criterion, data_loader, device, epoch, scheduler=None, grad_accumulation_steps=1):
+    torch.cuda.empty_cache()
+    model.train()
+    scaler = GradScaler()  # Initialize the gradient scaler for mixed precision
+    total_correct, total_count = 0, 0
+    total_loss = 0
+    log_interval = 10
+    start_time = time.time()
+    optimizer.zero_grad()  # Move optimizer.zero_grad() outside the batch loop
+
+    for idx, (inputs, labels) in enumerate(data_loader):
+        inputs, labels = inputs.to(device), labels.to(device)
+
+        # Start of mixed precision block
+        with autocast():
+            outputs = model(inputs)
+            loss = criterion(outputs, labels) / grad_accumulation_steps  # Scale loss
+
+        # Scale loss to prevent underflow
+        scaler.scale(loss).backward()
+
+        if (idx + 1) % grad_accumulation_steps == 0:  # Only step every grad_accumulation_steps
+            scaler.step(optimizer)  # Adjust model parameters
+            scaler.update()  # Update the scale for next iteration
+            optimizer.zero_grad()  # Zero the parameter gradients
+
+        if scheduler and (idx + 1) % grad_accumulation_steps == 0:
+            scheduler.step()  # Update the learning rate
+
+        total_correct += (outputs.argmax(1) == labels).sum().item()
+        total_count += labels.size(0)
+        total_loss += loss.item() * grad_accumulation_steps  # Unscale the loss
+
+        if idx % log_interval == 0 and idx > 0:
+            elapsed = time.time() - start_time
+            print(f'Epoch {epoch+1} | {idx}/{len(data_loader)} batches | '
+                  f'Accuracy: {total_correct / total_count:.3f} | '
+                  f'Loss: {loss.item() * grad_accumulation_steps:.3f} | '  # Unscale the loss for logging
+                  f'Elapsed time: {elapsed:.2f}s')
+            start_time = time.time()
+
+    # After the epoch, ensure any remaining gradients are processed
+    if len(data_loader) % grad_accumulation_steps != 0:
+        scaler.step(optimizer)
+        scaler.update()
+        optimizer.zero_grad()
+
+    return total_loss / len(data_loader), total_correct / total_count
 
 
 def evaluate(model, data_loader, device, criterion):
