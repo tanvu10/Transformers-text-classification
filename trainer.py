@@ -13,7 +13,6 @@ import gc
 
 
 def train_epoch(model, optimizer, criterion, data_loader, device, epoch, scheduler=None):
-    torch.cuda.empty_cache()
     model.train()
     total_correct, total_count = 0, 0
     total_loss = 0
@@ -60,9 +59,6 @@ def evaluate(model, data_loader, device, criterion):
             total_correct += (outputs.argmax(1) == labels).sum().item()
             total_count += labels.size(0)
             total_loss += loss.item()
-
-    torch.cuda.empty_cache()  # Clear GPU cache after evaluation
-    gc.collect()  # Collect garbage to free memory
 
     return total_loss / len(data_loader), total_correct / total_count
 
