@@ -9,7 +9,7 @@ from trainer import *
 class Config(object):
     batch_size = 64
     d_model = 200 # embedded_size
-    nhead = 4
+    nhead = 8
     num_encoder_layers = 2
     dim_feedforward = 128
     dropout = 0.1
@@ -52,8 +52,7 @@ config.max_seq_length = max_seq_length
 
 
 # hyper-parameters tuning
-# best_config = tune_hyperparameters(config, train_dataset, valid_dataset)
-best_config = config
+best_config = tune_hyperparameters(config, train_dataset, valid_dataset)
 # combine train + valid
 final_train_df = pd.concat([train_df, valid_df])
 final_train_dataset = TextClassificationDataset(final_train_df, vocab, tokenizer)
