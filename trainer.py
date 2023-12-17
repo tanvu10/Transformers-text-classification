@@ -8,9 +8,6 @@ from tokenizer import *
 from copy import deepcopy
 import json
 import torch.optim.lr_scheduler as lr_scheduler
-from torch.cuda.amp import GradScaler, autocast
-import gc
-
 
 def train_epoch(model, optimizer, criterion, data_loader, device, epoch, scheduler=None):
     model.train()
@@ -44,7 +41,7 @@ def train_epoch(model, optimizer, criterion, data_loader, device, epoch, schedul
             start_time = time.time()
     
     return total_loss / len(data_loader), total_correct / total_count
-
+    
 
 def evaluate(model, data_loader, device, criterion):
     model.eval()
@@ -102,7 +99,6 @@ def train(model, optimizer, criterion, train_loader, valid_loader, num_epochs, s
             print(f'Epoch {epoch+1}/{num_epochs} | '
                 f'Train Loss: {train_loss:.4f} | '
                 f'Train Accuracy: {train_acc:.4f} | ')
-            
 
 
 def tune_hyperparameters(config, train_dataset, valid_dataset):
