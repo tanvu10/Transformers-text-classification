@@ -1,0 +1,98 @@
+[
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 2,
+        "dim_feedforward": 128,
+        "nhead": 4,
+        "val_accuracy": 0.8464
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 2,
+        "dim_feedforward": 128,
+        "nhead": 8,
+        "val_accuracy": 0.8501
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 2,
+        "dim_feedforward": 216,
+        "nhead": 4,
+        "val_accuracy": 0.8372
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 2,
+        "dim_feedforward": 216,
+        "nhead": 8,
+        "val_accuracy": 0.8486
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 2,
+        "dim_feedforward": 512,
+        "nhead": 4,
+        "val_accuracy": 0.8554
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 2,
+        "dim_feedforward": 512,
+        "nhead": 8,
+        "val_accuracy": 0.8477
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 3,
+        "dim_feedforward": 128,
+        "nhead": 4,
+        "val_accuracy": 0.8478
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 3,
+        "dim_feedforward": 128,
+        "nhead": 8,
+        "val_accuracy": 0.8455
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 3,
+        "dim_feedforward": 216,
+        "nhead": 4,
+        "val_accuracy": 0.8462
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 3,
+        "dim_feedforward": 216,
+        "nhead": 8,
+        "val_accuracy": 0.8525
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 3,
+        "dim_feedforward": 512,
+        "nhead": 4,
+        "val_accuracy": 0.8438
+    },
+    {
+        "lr": 0.001,
+        "batch_size": 64,
+        "num_encoder_layers": 3,
+        "dim_feedforward": 512,
+        "nhead": 8,
+        "val_accuracy": 0.8588
+    }
+]
