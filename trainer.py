@@ -159,17 +159,18 @@ def train(model, optimizer, criterion, train_loader, valid_loader, num_epochs, s
 def tune_hyperparameters(config, train_dataset, valid_dataset):
     # Hyperparameters space
     learning_rates = [0.001]
-    batch_sizes = [64, 128]
+    batch_sizes = [64]
     num_encoder_layers_options = [2,3]
     dim_feedforward_options = [128, 216, 512]
     nhead_options = [4, 8]
     best_val_accuracy = 0.0
     best_config = None
-    results = []
     i = 1
 
-    for lr in learning_rates:
-        for batch_size in batch_sizes:
+
+    for batch_size in batch_sizes:
+        results = []
+        for lr in learning_rates:
             for num_encoder_layers in num_encoder_layers_options:
                 for dim_feedforward in dim_feedforward_options:
                     for nhead in nhead_options:
@@ -228,11 +229,12 @@ def tune_hyperparameters(config, train_dataset, valid_dataset):
 
                         i += 1
 
+        # Save the results to a JSON file
+        with open(f'hyperparameter_tuning_results_{batch_size}.json', 'w') as f:
+            json.dump(results, f, indent=4)
+
+
     print(f"Best Validation Accuracy: {best_val_accuracy}")
     print(f"Best Hyperparameters: {vars(best_config)}")
-
-    # Save the results to a JSON file
-    with open('hyperparameter_tuning_results.json', 'w') as f:
-        json.dump(results, f, indent=4)
 
     return best_config
