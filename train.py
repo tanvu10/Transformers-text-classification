@@ -34,7 +34,6 @@ test_df['sentence'] = test_df['sentence'].apply(preprocess_text)
 tokenizer = get_tokenizer("basic_english")
 vocab = build_vocab(train_df['sentence'], tokenizer)
 config.vocab_size = len(vocab)
-# max_seq_length_from_train = train_dataset.max_seq_length
 
 
 # tokenize dataset
@@ -53,6 +52,7 @@ config.max_seq_length = max_seq_length
 
 # hyper-parameters tuning
 best_config = tune_hyperparameters(config, train_dataset, valid_dataset)
+
 # combine train + valid
 final_train_df = pd.concat([train_df, valid_df])
 final_train_dataset = TextClassificationDataset(final_train_df, vocab, tokenizer)
@@ -70,7 +70,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 if torch.cuda.device_count() > 1:
     print("Let's use", torch.cuda.device_count(), "GPUs")
     final_model = nn.DataParallel(final_model)
-
 
 train(final_model, optimizer, criterion, final_train_loader, test_loader, best_config.max_epochs, save_model_path, option='test')
 test_loss, test_accuracy = evaluate(final_model, test_loader, device, criterion)
