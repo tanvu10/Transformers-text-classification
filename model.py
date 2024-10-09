@@ -47,6 +47,7 @@ class TransformerEncoderModel(nn.Module):
         
         # shape [batch_size, d_model]
         output = F.relu(self.linear1(output))
+        # shape [batch_size, 2]
         output = self.linear2(output)
         return output
     
